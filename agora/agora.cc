@@ -1,11 +1,10 @@
 #include "agora.h"
 #include "recorder.hh"
-#include <stdio.h>
+
+#include <dlfcn.h>
 
 void start()
 {
-    Recorder *r = new Recorder();
-    printf(r->Out());
-    printf("out.");
+    Recorder *r = new Recorder;
     delete r;
 }
