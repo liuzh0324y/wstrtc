@@ -3,14 +3,20 @@ package main
 /*
 #cgo CFLAGS: -I ${SRCDIR}/agora
 #cgo CXXFLAGS: -std=c++11
-#cgo LDFLAGS: -L ${SRCDIR}/agora -lagora -L ${SRCDIR}/agora/sdk/libs -lrecorder -pthread -lstdc++
+#cgo LDFLAGS: -L ${SRCDIR}/agora -lagora -L ${SRCDIR}/agora/sdk/libs -lrecorder -lstdc++ -lpthread -lm
 #include "agora.h"
 */
 import "C"
+import (
+	"fmt"
+)
 
 //-L ${SRCDIR}/agora/sdk/libs -lrecorder
+
 func main() {
 	C.start()
+	out := C.GoString(C.out())
+	fmt.Println(out)
 	// C.printf("%d", 1)
 	// ctx, cancel := context.WithCancel(context.Background())
 	// cmd := exec.CommandContext(ctx, "ls")

@@ -18,6 +18,21 @@ struct MixModeSettings {
     {};
 };
 
+class RecorderContext
+{
+public:
+    static RecorderContext* Instance()
+    {
+        static RecorderContext instance;
+        return &instance;
+    }
+
+    bool StartRecorder()
+    {
+        
+    }
+};
+
 class Recorder : virtual public agora::recording::IRecordingEngineEventHandler
 {
 public:

@@ -5,7 +5,7 @@
 extern "C" {
 #endif // __cplusplus
     void start();
-
+    const char * out();
 #ifdef __cplusplus
 }
 #endif // __cplusplus
