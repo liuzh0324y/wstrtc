@@ -14,7 +14,7 @@ $(TARGET): $(objects)
 recorder.o: recorder.cc
 	$(CXX) -c $(CXXFLAGS) recorder.cc
 
-agora.o: agora.cc
+agora.o: agora.cc agora.h
 	$(CXX) -c $(CXXFLAGS) agora.cc
 
 clean:

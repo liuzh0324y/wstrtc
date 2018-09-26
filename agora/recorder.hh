@@ -3,6 +3,7 @@
 
 #include "IAgoraLinuxSdkCommon.h"
 #include "IAgoraRecordingEngine.h"
+#include "utils.h"
 
 #include <string>
 #include <vector>
@@ -18,21 +19,6 @@ struct MixModeSettings {
     {};
 };
 
-class RecorderContext
-{
-public:
-    static RecorderContext* Instance()
-    {
-        static RecorderContext instance;
-        return &instance;
-    }
-
-    bool StartRecorder()
-    {
-        
-    }
-};
-
 class Recorder : virtual public agora::recording::IRecordingEngineEventHandler
 {
 public:
@@ -41,16 +27,13 @@ public:
     virtual ~Recorder();
 
     virtual bool createChannel(const std::string &appid, const std::string &channelKey, const std::string &name,  agora::linuxsdk::uid_t uid,
-                agora::recording::RecordingConfig &config);
+                agora::recording::RecordingConfig &config, callback b);
 
     virtual bool leaveChannel();
 
     const char * Out();
 
 protected:
-
-
-
     /**
      *  Callback when an error occurred during the runtime of recording engine
      *
@@ -130,13 +113,67 @@ protected:
     virtual void videoFrameReceived(unsigned int uid, const agora::linuxsdk::VideoFrame *frame) const;
 
 private:
-    bool m_stopped;
-    std::vector<agora::linuxsdk::uid_t> m_peers;
-    std::string m_logdir;
-    std::string m_storage_dir;
-    MixModeSettings m_mixRes;
-    agora::recording::RecordingConfig m_config;
-    agora::recording::IRecordingEngine *m_engine;
+    bool _stopped;
+    std::string _channelId;
+    std::vector<agora::linuxsdk::uid_t> _peers;
+    std::string _logdir;
+    std::string _storageDir;
+    MixModeSettings _mixRes;
+    agora::recording::RecordingConfig _config;
+    agora::recording::IRecordingEngine *_engine;
+    callback _callback;
+};
+
+static callback _callback;
+
+class RecorderContext
+{
+public:
+    static RecorderContext* Instance()
+    {
+        static RecorderContext instance;
+        return &instance;
+    }
+
+    void Init(callback b)
+    {
+        _callback = b;
+    }
+
+    bool StartRecorder(const char *appId, const char *channelKey, const char *channelId)
+    {
+        Recorder * produce = new Recorder;
+        agora::recording::RecordingConfig config;
+        bool isOk = produce->createChannel(appId, channelKey, channelId, 1000, config, Callback);
+        if (isOk != true)
+        {
+            delete produce;
+            produce = nullptr;
+            return false;
+        }
+
+        _recorder.push_back(produce);
+        return true;
+    }
+
+    bool StopRecorder(const char *channelId)
+    {
+        return true;
+    }
+
+    static int Callback(const char *channelId, int status)
+    {
+        if (_callback != nullptr) {
+            _callback(channelId, status);
+        }
+        
+    }
+private:
+    RecorderContext(){
+        _callback = nullptr;
+    }
+    std::vector<Recorder*> _recorder;
+    // callback  _callback;
 };
 
 #endif // RECORDER_HH

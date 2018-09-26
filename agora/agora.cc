@@ -3,12 +3,19 @@
 
 #include <dlfcn.h>
 
-void start()
+void init(callback b)
 {
-    Recorder *r = new Recorder;
-    delete r;
+    RecorderContext::Instance()->Init(b);
+}
+void start(const char *appId, const char *channelKey, const char *channelId)
+{
+    RecorderContext::Instance()->StartRecorder(appId, channelKey, channelId);
 }  
 
+void stop(const char *channelId)
+{
+
+}
 const char * out()
 {
     return "it's out.";
